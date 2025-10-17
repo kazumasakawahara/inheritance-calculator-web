@@ -8,7 +8,7 @@ from app.auth import auth_backend, fastapi_users
 from app.config import settings
 from app.db import create_db_and_tables
 from app.schemas import UserRead, UserCreate
-from app.api import cases
+from app.api import cases, calculate
 
 
 @asynccontextmanager
@@ -74,6 +74,13 @@ app.include_router(
     cases.router,
     prefix="/api/cases",
     tags=["cases"],
+)
+
+# Calculation routes
+app.include_router(
+    calculate.router,
+    prefix="/api/cases",
+    tags=["calculate"],
 )
 
 

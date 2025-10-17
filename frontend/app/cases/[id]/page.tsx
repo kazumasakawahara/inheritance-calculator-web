@@ -108,6 +108,12 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
                 {getStatusLabel(caseData.status)}
               </span>
             </div>
+            <Link
+              href={`/cases/${id}/calculate`}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              相続計算
+            </Link>
           </div>
 
           {caseData.description && (
