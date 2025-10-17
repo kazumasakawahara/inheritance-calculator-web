@@ -28,6 +28,9 @@ ENV/
 htmlcov/
 *.log
 
+# Allow frontend/lib directory (Next.js library code)
+!frontend/lib/
+
 # Node
 node_modules/
 .next/

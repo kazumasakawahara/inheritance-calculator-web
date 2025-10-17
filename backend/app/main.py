@@ -1,6 +1,23 @@
 """FastAPI Main Application"""
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.auth import auth_backend, fastapi_users
+from app.config import settings
+from app.db import create_db_and_tables
+from app.schemas import UserRead, UserCreate
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan events"""
+    # Startup: Create database tables
+    await create_db_and_tables()
+    yield
+    # Shutdown: Cleanup if needed
+
 
 app = FastAPI(
     title="Inheritance Calculator API",
@@ -8,15 +25,47 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS設定（開発環境用）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js開発サーバー
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+# Authentication routes
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend),
+    prefix="/auth/jwt",
+    tags=["auth"],
+)
+
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
+
+app.include_router(
+    fastapi_users.get_reset_password_router(),
+    prefix="/auth",
+    tags=["auth"],
+)
+
+app.include_router(
+    fastapi_users.get_verify_router(UserRead),
+    prefix="/auth",
+    tags=["auth"],
+)
+
+app.include_router(
+    fastapi_users.get_users_router(UserRead, UserCreate),
+    prefix="/users",
+    tags=["users"],
 )
 
 
@@ -34,10 +83,3 @@ async def root():
 async def health_check():
     """ヘルスチェック"""
     return {"status": "healthy"}
-
-
-# TODO: APIルーターの追加
-# from app.api import auth, cases, calculate
-# app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-# app.include_router(cases.router, prefix="/api/cases", tags=["cases"])
-# app.include_router(calculate.router, prefix="/api/calculate", tags=["calculate"])
