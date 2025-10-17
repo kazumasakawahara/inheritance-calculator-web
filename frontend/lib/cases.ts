@@ -1,4 +1,6 @@
-"""Case Management API Functions"""
+/**
+ * Case Management API Functions
+ */
 import apiClient from './api'
 
 export enum CaseStatus {

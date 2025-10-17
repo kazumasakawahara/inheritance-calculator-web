@@ -1,4 +1,6 @@
-"""Authentication API Functions"""
+/**
+ * Authentication API Functions
+ */
 import apiClient from './api'
 
 export interface LoginCredentials {

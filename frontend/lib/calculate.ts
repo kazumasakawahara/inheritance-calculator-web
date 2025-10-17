@@ -1,4 +1,6 @@
-"""Calculation API Functions"""
+/**
+ * Calculation API Functions
+ */
 import apiClient from './api'
 
 export interface Heir {

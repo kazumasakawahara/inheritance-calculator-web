@@ -1,4 +1,6 @@
-"""Authentication State Management with Zustand"""
+/**
+ * Authentication State Management with Zustand
+ */
 import { create } from 'zustand'
 import { authApi, User } from '@/lib/auth'
 
