@@ -8,7 +8,7 @@ from app.auth import auth_backend, fastapi_users
 from app.config import settings
 from app.db import create_db_and_tables
 from app.schemas import UserRead, UserCreate
-from app.api import cases, calculate
+from app.api import cases, calculate, health
 
 
 @asynccontextmanager
@@ -83,6 +83,11 @@ app.include_router(
     tags=["calculate"],
 )
 
+# Health check routes
+app.include_router(
+    health.router,
+)
+
 
 @app.get("/")
 async def root():
@@ -92,9 +97,3 @@ async def root():
         "version": "0.1.0",
         "docs": "/docs",
     }
-
-
-@app.get("/health")
-async def health_check():
-    """ヘルスチェック"""
-    return {"status": "healthy"}

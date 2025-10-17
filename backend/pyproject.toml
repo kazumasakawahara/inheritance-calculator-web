@@ -32,8 +32,8 @@ dependencies = [
     "pydantic-settings>=2.0.0",
     "email-validator>=2.0.0",
 
-    # Core Business Logic
-    "inheritance-calculator-core[agents]>=1.0.0",
+    # Core Business Logic (using local path)
+    "inheritance-calculator-core[agents] @ file:///Users/k-kawahara/Dev-Work/inheritance-calculator-core",
 
     # Utilities
     "python-dotenv>=1.0.0",
@@ -55,6 +55,12 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
 
 [tool.ruff]
 line-length = 88
