@@ -8,6 +8,7 @@ from app.auth import auth_backend, fastapi_users
 from app.config import settings
 from app.db import create_db_and_tables
 from app.schemas import UserRead, UserCreate
+from app.api import cases
 
 
 @asynccontextmanager
@@ -66,6 +67,13 @@ app.include_router(
     fastapi_users.get_users_router(UserRead, UserCreate),
     prefix="/users",
     tags=["users"],
+)
+
+# Case management routes
+app.include_router(
+    cases.router,
+    prefix="/api/cases",
+    tags=["cases"],
 )
 
 
