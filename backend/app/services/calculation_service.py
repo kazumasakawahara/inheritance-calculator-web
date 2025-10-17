@@ -2,13 +2,21 @@
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-from inheritance_calculator_core.models import (
-    Person as CorePerson,
-    Relationship as CoreRelationship,
-    RelationshipType as CoreRelationshipType,
-)
-from inheritance_calculator_core.calculator import InheritanceCalculator
-from inheritance_calculator_core.models.result import InheritanceResult
+try:
+    from inheritance_calculator_core.models import (
+        Person as CorePerson,
+        Relationship as CoreRelationship,
+        RelationshipType as CoreRelationshipType,
+        InheritanceResult,
+    )
+    from inheritance_calculator_core.services.inheritance_calculator import InheritanceCalculator
+except ImportError:
+    # Fallback for testing without core library
+    CorePerson = None  # type: ignore
+    CoreRelationship = None  # type: ignore
+    CoreRelationshipType = None  # type: ignore
+    InheritanceResult = None  # type: ignore
+    InheritanceCalculator = None  # type: ignore
 
 from app.models import Person, PersonRelationship, RelationshipType
 
@@ -18,7 +26,10 @@ class CalculationService:
 
     def __init__(self):
         """Initialize calculation service"""
-        self.calculator = InheritanceCalculator()
+        if InheritanceCalculator is not None:
+            self.calculator = InheritanceCalculator()
+        else:
+            self.calculator = None
 
     def _convert_to_core_person(self, person: Person) -> CorePerson:
         """Convert web Person model to core Person model"""
@@ -64,7 +75,7 @@ class CalculationService:
         persons: List[Person],
         relationships: List[PersonRelationship],
         decedent_id: int,
-    ) -> InheritanceResult:
+    ):
         """
         Calculate inheritance for a case
 
@@ -76,6 +87,8 @@ class CalculationService:
         Returns:
             InheritanceResult from core library
         """
+        if self.calculator is None:
+            raise RuntimeError("Inheritance calculator is not available. Core library may not be installed correctly.")
         # Convert persons to core models
         persons_map: Dict[int, CorePerson] = {}
         core_persons: List[CorePerson] = []

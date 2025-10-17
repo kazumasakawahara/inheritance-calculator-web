@@ -74,20 +74,14 @@ async def readiness_check():
 
     # Check Neo4j connection
     try:
-        neo4j_service = Neo4jService(
-            uri=settings.neo4j_uri,
-            user=settings.neo4j_user,
-            password=settings.neo4j_password
-        )
-        async with neo4j_service:
+        neo4j_service = Neo4jService()
+        await neo4j_service.connect()
+        try:
             # Simple connectivity test
-            query = "RETURN 1 AS result"
-            records = await neo4j_service.driver.execute_query(query)
-            if records:
-                health_status["checks"]["neo4j"] = "healthy"
-            else:
-                health_status["checks"]["neo4j"] = "unhealthy"
-                is_ready = False
+            await neo4j_service.driver.verify_connectivity()
+            health_status["checks"]["neo4j"] = "healthy"
+        finally:
+            await neo4j_service.close()
     except Exception as e:
         health_status["checks"]["neo4j"] = f"unhealthy: {str(e)}"
         is_ready = False
